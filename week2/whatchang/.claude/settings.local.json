@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm config get:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
