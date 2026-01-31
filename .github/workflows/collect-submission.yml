@@ -1,0 +1,49 @@
+name: Collect Submission
+on:
+  workflow_dispatch:
+    inputs:
+      week:
+        required: true
+        type: string
+      user_id:
+        required: true
+        type: string
+      github_url:
+        required: true
+        type: string
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone and collect
+        run: |
+          URL="${{ github.event.inputs.github_url }}"
+          URL="${URL%/}"; URL="${URL%.git}"
+          TARGET="week${{ github.event.inputs.week }}/${{ github.event.inputs.user_id }}"
+
+          rm -rf "${TARGET}" && mkdir -p "${TARGET}"
+
+          AUTH_URL="https://x-access-token:${{ secrets.SUBMISSIONS_PAT }}@github.com${URL#https://github.com}.git"
+          git clone --depth 1 "${AUTH_URL}" /tmp/repo
+
+          rsync -av --exclude='.git' /tmp/repo/ "${TARGET}/"
+          rm -rf /tmp/repo
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "week${{ github.event.inputs.week }}/${{ github.event.inputs.user_id }}"
+          git diff --cached --quiet && exit 0
+          git commit -m "Collect: week${{ github.event.inputs.week }}/${{ github.event.inputs.user_id }}
+
+          Source: ${{ github.event.inputs.github_url }}"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin main && break
+            sleep 2
+          done
