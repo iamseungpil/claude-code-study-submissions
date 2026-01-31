@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "arxiv": {
-      "command": "uv",
-      "args": ["tool", "run", "arxiv-mcp-server", "--storage-path", "./papers"]
-    }
-  }
-}
