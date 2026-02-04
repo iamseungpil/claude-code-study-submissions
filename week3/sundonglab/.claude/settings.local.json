@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(python3 *)",
+      "Bash(uv *)",
+      "WebFetch",
+      "WebSearch",
+      "mcp__arxiv-mcp-server__search_papers",
+      "mcp__arxiv-mcp-server__download_paper",
+      "mcp__arxiv-mcp-server__read_paper"
+    ]
+  },
+  "mcpServers": {
+    "arxiv": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["tool", "run", "arxiv-mcp-server"],
+      "env": {}
+    }
+  }
+}
